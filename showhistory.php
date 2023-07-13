@@ -11,6 +11,9 @@ require_once "config.php";
 $sql = "SELECT * FROM user WHERE userid='$UserID'";
 $result = mysqli_query($conn, $sql);
 $arrUser = mysqli_fetch_array($result, MYSQLI_ASSOC);
+
+$currMonth = date('m');
+$currYear = date('Y');
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -81,6 +84,38 @@ $arrUser = mysqli_fetch_array($result, MYSQLI_ASSOC);
             <?php } ?>
    </tbody>
 </table>
+<?php
+$sql="SELECT * FROM control10 WHERE userid='$UserID' AND MONTH(filled_at)=$currMonth AND YEAR(filled_at)=$currYear";
+$result=mysqli_query($conn,$sql);
+#$arr_res1=mysqli_fetch_array($result,MYSQLI_ASSOC);
+$rowCount=mysqli_num_rows($result);
+?>
+<?php if ($rowCount > 0) { ?>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th scope="col">Count</th>
+                <th scope="col">Remarks, if any</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php while ($arr_res1 = mysqli_fetch_array($result, MYSQLI_ASSOC)) { ?>
+                <tr>
+                    <td><?php echo $arr_res1["count"]; ?></td>
+                    <td>
+                        <?php
+                        if ($arr_res1["remarks"] == NULL)
+                            echo "NIL";
+                        else
+                            echo $arr_res1["remarks"];
+                        ?>
+                    </td>
+                </tr>
+            <?php } ?>
+        </tbody>
+    </table>
+<?php } ?>
+
     <div>
         <p>It is also certified that no incident of security threat has been reported in the division / group since past one month.In case of any such incidence the same will be reported to Lab,ISO immediately.</p>
     </div>
@@ -153,7 +188,18 @@ $arrUser = mysqli_fetch_array($result, MYSQLI_ASSOC);
         <p>IT Department</p>
     </div>
     </div>
+    <button id="printBtn" class="btn btn-warning mb-3" onclick="printForm()">Print</button>
+    <script type="text/javascript">
+        function printForm(){
+            var body=document.getElementById('body').innerHTML;
+            var printableCont=document.getElementById('printPage').innerHTML;
+            document.getElementById('body').innerHTML=printableCont;
+            window.print();
+            document.getElementById('body').innerHTML=body;
+        }
+    </script>
     <script src="js/jQuery.js"></script>
     <script src="js/bootstrap.min.js"></script>
+
 </body>
 </html>
